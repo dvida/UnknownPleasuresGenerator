@@ -3,4 +3,5 @@ A Python script that randomly generates a graph similar to the one on the cover 
 Parameters of image generation can be changed to your preference.
 
 Example image:
+
 ![alt tag](https://github.com/dvida/UnknownPleasuresGenerator/blob/master/imgs/UnknownPleasuresGen.jpg)
