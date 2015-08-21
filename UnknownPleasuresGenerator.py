@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy import signal
 
 # Number of curves to plot
 curves_no = 80
@@ -9,13 +8,15 @@ curves_no = 80
 curve_v_space = 3
 
 # Maximum munber of peaks in the center
-max_peaks = 8
+max_peaks = 9
 # Maximum parabolic peak amplitude
-max_parab_peak_amplitude = 0.02
+max_parab_peak_amplitude = 0.05
 # Maximum pointy peak amplitude
-max_point_peak_amplitude = 0.5
+max_point_peak_amplitude = 0.3
+#Peak noise
+peak_noise = 0.2
 # Max peak width
-max_peak_width = 15
+max_peak_width = 12
 
 # Space between the ends and the central wavy part
 parab_sides = 55
@@ -26,7 +27,7 @@ v_space = 15
 # Number of points in time
 time_points = 220
 
-# How much to shift the curves up (needed for proper filling the sapce below curves)
+# How much to shift the curves up (needed for proper filling the space below curves)
 move_up = 500
 
 # Generate X axis numbers
@@ -60,10 +61,14 @@ for i in range(curves_no):
 		peak_t = np.linspace(peak_time - peak_width, peak_time+peak_width, peak_width*2)
 		peak_parab = np.zeros((time_points))
 		# Peak is an upwardly pointing parabola
-		peak_parab[peak_time - peak_width : peak_time+peak_width] = - np.random.uniform(0, max_parab_peak_amplitude, 1) * (peak_t - peak_time)**2 - np.random.uniform(max_point_peak_amplitude/4, max_point_peak_amplitude, 1) * np.abs(peak_t - peak_time)
+		#peak_parab[peak_time - peak_width : peak_time+peak_width] = - np.random.uniform(0, max_parab_peak_amplitude, 1) * (peak_t - peak_time)**2 - np.random.uniform(max_point_peak_amplitude/4, max_point_peak_amplitude, 1) * np.abs(peak_t - peak_time)
+		peak_parab[peak_time - peak_width : peak_time+peak_width] = - np.random.uniform(0, max_parab_peak_amplitude, 1) * (peak_t - peak_time)**2 - np.random.exponential(max_point_peak_amplitude, 1) * np.abs(peak_t - peak_time)
 		#peak_parab[peak_time - peak_width : peak_time+peak_width] = -np.abs(peak_t - peak_time) * 2
 		min_peak = min(peak_parab)
 		peak_parab[peak_time - peak_width : peak_time+peak_width] -= min_peak
+
+		# Add noise to peak
+		peak_parab[peak_time - peak_width : peak_time+peak_width] += np.random.normal(0, peak_noise, peak_width*2)
 
 		peak_sum += peak_parab
 
@@ -74,7 +79,7 @@ for i in range(curves_no):
 	y = y + s + parab + parab_noise - i*curve_v_space + peak_sum + move_up
 
 	# Plot the curve in the right order
-	plt.plot(t, y, c = 'w', lw = 2, zorder = i)
+	plt.plot(t, y, c = 'w', lw = 1.6, zorder = i)
 
 	ax = plt.gca()
 
